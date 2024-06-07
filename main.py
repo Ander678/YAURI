@@ -1,9 +1,9 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHeaderView, QPushButton, QHBoxLayout, QLineEdit, QLabel
+from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QHeaderView, QPushButton, QHBoxLayout, QLineEdit, QLabel
 from PyQt6.QtGui import QFont
 import mysql.connector
 from mysql.connector import Error
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -28,11 +28,13 @@ class MainWindow(QMainWindow):
         search_layout.addWidget(self.search_input)
         self.layout.addLayout(search_layout)
 
-        self.search_input.textChanged.connect(self.filter_table)  # Conectar la señal textChanged
+        self.search_input.textChanged.connect(
+            self.filter_table)  # Conectar la señal textChanged
 
     def filter_table(self, text):
         for row in range(self.table_widget.rowCount()):
-            item = self.table_widget.item(row, 1)  # Columna del nombre del producto
+            # Columna del nombre del producto
+            item = self.table_widget.item(row, 1)
             if item is not None:
                 if text.lower() in item.text().lower():
                     self.table_widget.setRowHidden(row, False)
@@ -43,35 +45,43 @@ class MainWindow(QMainWindow):
         sort_layout = QHBoxLayout()
 
         sort_name_button = QPushButton("Nombre (A-Z)")
-        sort_name_button.clicked.connect(lambda: self.sort_table(column=1, reverse=False))
+        sort_name_button.clicked.connect(
+            lambda: self.sort_table(column=1, reverse=False))
         sort_layout.addWidget(sort_name_button)
 
         sort_name_reverse_button = QPushButton("Nombre (Z-A)")
-        sort_name_reverse_button.clicked.connect(lambda: self.sort_table(column=1, reverse=True))
+        sort_name_reverse_button.clicked.connect(
+            lambda: self.sort_table(column=1, reverse=True))
         sort_layout.addWidget(sort_name_reverse_button)
 
         sort_id_button = QPushButton("ID Producto (asc)")
-        sort_id_button.clicked.connect(lambda: self.sort_table(column=0, reverse=False))
+        sort_id_button.clicked.connect(
+            lambda: self.sort_table(column=0, reverse=False))
         sort_layout.addWidget(sort_id_button)
 
         sort_id_reverse_button = QPushButton("ID Producto (desc)")
-        sort_id_reverse_button.clicked.connect(lambda: self.sort_table(column=0, reverse=True))
+        sort_id_reverse_button.clicked.connect(
+            lambda: self.sort_table(column=0, reverse=True))
         sort_layout.addWidget(sort_id_reverse_button)
 
         sort_price_button = QPushButton("Precio (asc)")
-        sort_price_button.clicked.connect(lambda: self.sort_table(column=3, reverse=False))
+        sort_price_button.clicked.connect(
+            lambda: self.sort_table(column=3, reverse=False))
         sort_layout.addWidget(sort_price_button)
 
         sort_price_reverse_button = QPushButton("Precio (desc)")
-        sort_price_reverse_button.clicked.connect(lambda: self.sort_table(column=3, reverse=True))
+        sort_price_reverse_button.clicked.connect(
+            lambda: self.sort_table(column=3, reverse=True))
         sort_layout.addWidget(sort_price_reverse_button)
 
         sort_supplier_button = QPushButton("ID Proveedor (asc)")
-        sort_supplier_button.clicked.connect(lambda: self.sort_table(column=4, reverse=False))
+        sort_supplier_button.clicked.connect(
+            lambda: self.sort_table(column=4, reverse=False))
         sort_layout.addWidget(sort_supplier_button)
 
         sort_supplier_reverse_button = QPushButton("ID Proveedor (desc)")
-        sort_supplier_reverse_button.clicked.connect(lambda: self.sort_table(column=4, reverse=True))
+        sort_supplier_reverse_button.clicked.connect(
+            lambda: self.sort_table(column=4, reverse=True))
         sort_layout.addWidget(sort_supplier_reverse_button)
 
         self.layout.addLayout(sort_layout)
@@ -88,7 +98,8 @@ class MainWindow(QMainWindow):
                     record.append("")
             records.append(record)
 
-        sorted_records = sorted(records, key=lambda x: x[column], reverse=reverse)
+        sorted_records = sorted(
+            records, key=lambda x: x[column], reverse=reverse)
 
         self.table_widget.clearContents()
 
@@ -130,17 +141,20 @@ class MainWindow(QMainWindow):
 
             if connection.is_connected():
                 cursor = connection.cursor()
-                cursor.execute("SELECT producto_id, nombre, descripcion, precio, proveedor_id, cantidad FROM Producto")
+                cursor.execute(
+                    "SELECT producto_id, nombre, descripcion, precio, proveedor_id, cantidad FROM Producto")
                 records = cursor.fetchall()
 
                 self.table_widget.setRowCount(len(records))
-                self.table_widget.setColumnCount(6)  # Aumenta el número de columnas
+                # Aumenta el número de columnas
+                self.table_widget.setColumnCount(6)
                 self.table_widget.setHorizontalHeaderLabels(['ID', 'Nombre', 'Descripción', 'Precio', 'Proveedor ID',
                                                              'Cantidad'])  # Agrega el encabezado de la nueva columna
 
                 for i, row in enumerate(records):
                     for j, cell in enumerate(row):
-                        self.table_widget.setItem(i, j, QTableWidgetItem(str(cell)))
+                        self.table_widget.setItem(
+                            i, j, QTableWidgetItem(str(cell)))
 
                 # Make columns stretch to fill available space
                 header = self.table_widget.horizontalHeader()
@@ -155,6 +169,7 @@ class MainWindow(QMainWindow):
             if connection.is_connected():
                 cursor.close()
                 connection.close()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
